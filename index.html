@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAP AI Opportunity Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: a process ribbon (L1 chain) on top, filters beneath, then L1 sections holding L2 opportunity rows (pain → AI). */
+:root{
+  --bg:#f3f5f6; --surface:#ffffff; --sunk:#e8ecee; --fg:#14202b; --muted:#5a6873; --line:#d5dce0;
+  --s2p:#0f7a6c; --o2c:#3b4fc4; --r2r:#b0620c; --int:#7a3fa8;
+  --pain:#b4362f; --pain-bg:#fbeceb; --gain:#11734f; --gain-bg:#e6f4ee;
+  --chip:#eef1f3;
+  --f-display:"Bricolage Grotesque", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, "Noto Sans SC", monospace;
+  --accent:var(--s2p);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#17212a; --sunk:#1d2933; --fg:#e4eaee; --muted:#93a2ad; --line:#2a3743;
+  --s2p:#3fc2ae; --o2c:#8c9cff; --r2r:#f0a24a; --int:#c58cf0;
+  --pain:#f08a82; --pain-bg:#2c1c1d; --gain:#5fd3a2; --gain-bg:#14281f; --chip:#22303b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#17212a; --sunk:#1d2933; --fg:#e4eaee; --muted:#93a2ad; --line:#2a3743;
+  --s2p:#3fc2ae; --o2c:#8c9cff; --r2r:#f0a24a; --int:#c58cf0;
+  --pain:#f08a82; --pain-bg:#2c1c1d; --gain:#5fd3a2; --gain-bg:#14281f; --chip:#22303b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(28px,4.4vw,42px);font-weight:700;line-height:1.15;margin-top:6px;max-width:16em}
+.lede{max-width:40em;color:var(--muted);margin:10px 0 0}
+.lens{display:flex;gap:8px;flex-wrap:wrap}
+.lens button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 16px;text-align:left;min-width:220px;flex:1}
+.lens button b{display:block;font-family:var(--f-display);font-size:18px}
+.lens button span{font-size:13px;color:var(--muted)}
+.lens button[aria-pressed="true"]{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+
+.procs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 10px}
+.procs button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-weight:600}
+.procs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.procs small{font-weight:400;opacity:.8;margin-left:6px}
+
+.ribbon{display:flex;overflow-x:auto;gap:0;margin:6px 0 18px;padding-bottom:4px}
+.ribbon button{flex:1 0 140px;background:var(--surface);border:1px solid var(--line);border-left:none;padding:12px 22px 12px 26px;text-align:left;position:relative;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,14px 50%)}
+.ribbon button:first-child{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%);border-left:1px solid var(--line);border-radius:8px 0 0 8px;padding-left:16px}
+.ribbon button+button{margin-left:-8px}
+.ribbon .code{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+.ribbon .nm{display:block;font-weight:600;font-size:14px;line-height:1.3}
+.ribbon .ct{font-size:12px;color:var(--muted)}
+.ribbon button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.ribbon button[aria-pressed="true"] .code,.ribbon button[aria-pressed="true"] .ct{color:var(--bg);opacity:.85}
+
+.filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 14px;background:var(--sunk);border-radius:10px;margin-bottom:22px}
+.filters .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filters .lbl{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:2px}
+.fchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:13px}
+.fchip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.filters input{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;min-width:0;width:220px;max-width:100%;font:inherit;color:var(--fg)}
+.count{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+section.l1{margin-bottom:30px}
+.l1head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;border-bottom:2px solid var(--accent);padding-bottom:6px;margin-bottom:12px}
+.l1head .code{font-family:var(--f-mono);font-size:13px;color:var(--accent)}
+.l1head h2{font-size:22px;font-weight:700}
+.l1head p{margin:0;color:var(--muted);font-size:14px;flex-basis:100%}
+
+.l2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.2fr) minmax(0,1.35fr);gap:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.l2>div{padding:14px 16px;min-width:0}
+.l2 .who{border-right:1px solid var(--line)}
+.l2 .code{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.l2 h3{font-size:16px;font-weight:700;margin:2px 0 8px;line-height:1.3}
+.team{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;background:var(--chip);border-radius:6px;padding:3px 8px}
+.team svg{flex:none}
+.col-h{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;margin-bottom:4px;display:block;font-weight:500}
+.pain{background:var(--pain-bg)}
+.pain .col-h{color:var(--pain)}
+.ai{background:var(--gain-bg)}
+.ai .col-h{color:var(--gain)}
+.l2 p{margin:0;font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.tag{font-size:11.5px;border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:1px 7px}
+.sapref{font-size:12px;color:var(--muted);margin-top:8px}
+.sapref b{font-weight:600;color:var(--fg)}
+.impact{display:inline-flex;gap:2px;align-items:center;font-size:11.5px;color:var(--muted);margin-top:10px}
+.impact i{width:14px;height:6px;border-radius:2px;background:var(--line);display:inline-block}
+.impact i.on{background:var(--accent)}
+.impact span{margin-left:6px}
+.empty{padding:40px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px}
+
+footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
+@media (max-width:820px){
+  .l2{grid-template-columns:1fr}
+  .l2 .who{border-right:none;border-bottom:1px solid var(--line)}
+  .count{margin-left:0}
+}
+@media (prefers-reduced-motion:no-preference){.l2{transition:border-color .15s}.l2:hover{border-color:var(--accent)}}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">AI Opportunity Map · SAP 项目</div>
+      <h1>AI 在 SAP 项目中的价值落点</h1>
+      <p class="lede">同一个项目，两个视角。“客户运营”看 AI 如何提升我们所实施财务流程的效率；“项目实施”看 AI 如何提升顾问的交付效率。</p>
+    </div>
+    <div class="lens" role="group" aria-label="视角">
+      <button id="lens-ext" aria-pressed="true" data-lens="ext"><b>客户运营（External）</b><span>S2P · O2C · R2R，按 L1 / L2 拆解</span></button>
+      <button id="lens-int" aria-pressed="false" data-lens="int"><b>项目实施（Internal）</b><span>SAP Activate 各阶段，按 L1 / L2 拆解</span></button>
+    </div>
+  </header>
+
+  <div class="procs" id="procs" role="group" aria-label="流程"></div>
+  <nav class="ribbon" id="ribbon" aria-label="L1 步骤"></nav>
+
+  <div class="filters">
+    <div class="grp"><span class="lbl">AI 类型</span><span id="types" class="grp"></span></div>
+    <div class="grp"><span class="lbl">价值</span>
+      <button class="fchip" id="imp-all" aria-pressed="true" data-imp="0">全部</button>
+      <button class="fchip" id="imp-hi" aria-pressed="false" data-imp="3">仅高价值</button>
+    </div>
+    <div class="grp"><input id="q" type="search" placeholder="搜索痛点、团队、AI…" aria-label="搜索"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="out"></main>
+
+  <footer>
+    讨论稿。价值评级是对效率和风控收益的定性判断，不是实测数据。“SAP 现有能力”仅示例说明 SAP 产品组合中已有类似功能；对客户引用前请核实当前可用性、授权和版本。
+  </footer>
+</div>
+
+<script>
+/* ===== DATA =====
+   每个 L2: [名称, 负责团队/角色, 痛点, AI 如何帮助, AI 类型, 价值 1-3, SAP 现有能力示例（无则留空）]
+   AI 类型（保留英文作为筛选键）: Generative, Predictive, Document AI, Matching, Anomaly, Agentic */
+const DATA = {
+ext: {
+ S2P: { name:"Source-to-Pay", color:"--s2p", blurb:"从采购策略到向供应商付款。", l1:[
+  { name:"寻源与供应商管理", desc:"决定买什么、向谁买、以什么条款买。", l2:[
+   ["支出分析与品类策略","Category Management 品类管理","支出分散在多个 ERP 和公司卡中，分类不准确、不一致，品类计划依赖过时的 Excel 数据。","ML 自动将支出明细归类到统一分类体系；GenAI 用通俗语言总结品类趋势和降本机会。","Predictive",3,"SAP Ariba Spend Analysis"],
+   ["供应商准入与资质审核","Supplier Management 供应商管理","问卷、证书和银行/税务文件靠人工核对，准入周期长达数周。","Document AI 读取证书和银行函件，对照工商/税务登记自动校验，在人工复核前先标出缺漏。","Document AI",2,"SAP Ariba Supplier Lifecycle & Performance"],
+   ["RFx 与谈判","Strategic Sourcing 战略寻源","编写 RFx 文件需要数周，比价在 Excel 中进行。","GenAI 基于历史项目和模板起草 RFx；对报价做标准化处理，并按成本、风险和 ESG 对定标方案排序。","Generative",2,"SAP Ariba Sourcing (Joule)"],
+   ["合同起草与合规","采购 + 法务","义务和价格条款埋在 PDF 里，导致价格漏损和续约遗漏。","抽取合同条款，对照法务标准条款检查偏差；当 PO 或发票价格违反合同时自动提醒。","Document AI",3,"SAP Ariba Contracts"],
+   ["供应商风险与绩效","Supplier Management / 风控","绩效记分卡按季度出、只看历史，供应中断发现得太晚。","监控新闻、财务和 ESG 信号；预测每家供应商的延迟交付或质量风险，并推荐备选供应商。","Predictive",2,"SAP Business Network / Ariba Supplier Risk"]
+  ]},
+  { name:"请购与采购", desc:"把需求转化为合规的采购订单。", l2:[
+   ["请购单创建","需求方 / 采购运营","自由文本请购、物料组选错和目录外采购造成不合规支出（maverick spend）。","对话式请购：用户描述需求，助手自动选定目录物料、物料组和科目。","Generative",3,"Joule in SAP S/4HANA / Ariba Buying"],
+   ["审批流","预算负责人","审批排队且缺少背景信息，周期拉长，低风险单据和高风险单据一样要等。","对低金额、合规的单据按风险自动审批；用 GenAI 为审批人汇总预算、合同和历史信息。","Agentic",2,"SAP Build Process Automation"],
+   ["PO 创建与货源确定","采购员 Buyer","采购员手工将 PR 转为 PO，凭经验选择货源。","根据合同和历史推荐货源和价格；对符合条件的行项目实现无人工 PR→PO。","Predictive",2,"S/4HANA purchasing (ML source proposals)"],
+   ["订单确认与催货","采购员 Buyer","靠邮件追供应商确认，预计到货时间未在 SAP 中更新。","Agent 读取供应商邮件、录入订单确认，并预测哪些未清 PO 会延迟到货。","Agentic",2,""]
+  ]},
+  { name:"收货", desc:"确认货物和服务已交付。", l2:[
+   ["收货（GR）","仓库 / 收货","收货过账延迟或缺失导致发票冻结，GR/IR 余额虚高。","用手机拍照采集送货单；预测缺失的收货，在发票到达前提醒收货人。","Document AI",2,""],
+   ["服务确认","需求方","服务确认单（SES）常被遗忘，服务类发票卡住。","根据工时表或供应商报告自动起草服务确认，一键确认。","Generative",1,""]
+  ]},
+  { name:"发票处理（AP）", desc:"采集、匹配并审批供应商发票。", l2:[
+   ["发票采集","AP 应付","格式各异的 PDF 和纸质发票仍靠手工录入或脆弱的 OCR 模板。","无模板抽取发票抬头和行项目并给出置信度，直接写入 SAP。","Document AI",3,"SAP Document Information Extraction"],
+   ["匹配与异常处理","AP 应付","价格和数量差异导致发票冻结，会计大部分时间花在处理异常上。","识别每张冻结发票的根因，在容差内自动处理，并由 Agent 起草给供应商或采购员的询问。","Agentic",3,"S/4HANA invoice exception handling (Joule)"],
+   ["重复付款与舞弊识别","AP / 内控","基于规则的检查漏掉重复发票和虚假的银行账户变更。","对发票和供应商主数据变更做异常检测，付款前给出风险评分。","Anomaly",3,""],
+   ["供应商查询","AP Helpdesk","“我的款什么时候付？”这类邮件占用大量 AP 人力。","GenAI 助手通过邮件或供应商门户，基于 SAP 实时数据回答付款状态。","Generative",2,""]
+  ]},
+  { name:"付款", desc:"在正确的时间向正确的供应商付款。", l2:[
+   ["付款建议与付款运行","AP / 司库 Treasury","人工复核付款建议，错过提前付款折扣。","在现金折扣和现金流预测之间权衡，推荐付款时点；标出付款建议中的异常项。","Predictive",2,""],
+   ["供应商主数据维护","主数据团队","重复供应商和未经核实的银行信息变更带来风险。","识别重复供应商，核验银行信息，并用外部数据补全主数据。","Matching",2,"SAP Master Data Governance"]
+  ]}
+ ]},
+ O2C: { name:"Order-to-Cash", color:"--o2c", blurb:"从客户准入到回款入账。", l1:[
+  { name:"客户与信用管理", desc:"了解客户，确定可承受的风险。", l2:[
+   ["客户准入与主数据","销售运营 / 主数据","客户主数据不完整、重复，导致开票和税务错误。","从工商登记自动填充，模糊匹配去重，录入时即校验税号。","Matching",2,"SAP Master Data Governance"],
+   ["信用评估与额度","Credit Management 信用管理","信用额度一年一评、长期不变，人工审核拖慢订单。","结合付款行为和外部数据做预测性信用评分，动态建议信用额度。","Predictive",3,"SAP Credit Management"]
+  ]},
+  { name:"订单管理", desc:"报价、接单和确认订单。", l2:[
+   ["报价与定价","销售 / 定价","折扣不统一，毛利逐单流失。","基于赢单/丢单和毛利历史推荐价格和折扣。","Predictive",2,""],
+   ["销售订单录入","客服 Customer Service","订单以邮件 PDF 形式到达，靠手工录入。","Document AI 将客户邮件中的 PO 转为销售订单请求，供人工复核。","Document AI",3,"S/4HANA sales order automation (Document Information Extraction)"],
+   ["订单冻结与 ATP","客服 / 供应计划","订单冻结或缺货发现得晚，最后一刻才通知客户。","预测每张订单的交付风险，推荐替代方案，并起草给客户的沟通信息。","Predictive",2,""]
+  ]},
+  { name:"履约交付", desc:"发货并证明已交付。", l2:[
+   ["交货与运输","物流","货物出库后到货时间不透明。","基于承运商和历史数据预测 ETA，并同步给客服。","Predictive",1,""],
+   ["签收证明（POD）","物流","缺少 POD 会在后续引发争议。","自动采集并抽取签收单据，关联到对应交货单。","Document AI",2,""]
+  ]},
+  { name:"开票与收入确认", desc:"正确开票并确认收入。", l2:[
+   ["开票","开票团队","开票冻结和发票错误引发争议，拖慢回款。","开票前对价格、数量和税额做异常检查，再发出发票。","Anomaly",2,""],
+   ["收入确认","收入会计","复杂合同（IFRS 15 / ASC 606）靠人工解读。","从合同中抽取履约义务和条款，写入收入会计系统。","Document AI",2,"SAP Revenue Accounting & Reporting"]
+  ]},
+  { name:"催收与回款", desc:"核销回款、催收并处理争议。", l2:[
+   ["回款核销（Cash Application）","AR 应收","付款附言缺失或在邮件里，核销靠人工匹配。","ML 将到账款项与未清发票匹配，并从邮件和 PDF 中读取付款通知。","Matching",3,"SAP Cash Application"],
+   ["催收","催收专员","所有客户收到同样的催款函，催收员只按金额排工作清单。","预测付款日期，按风险排序工作清单，起草个性化催款邮件。","Predictive",3,"SAP Collections Management"],
+   ["争议管理","AR / 客服","争议迟迟不能解决，根因不清楚。","识别争议原因，自动收集发票、POD 和定价证据，起草回复。","Agentic",3,"SAP Dispute Management (Joule)"],
+   ["坏账与减值计提","AR / 财务控制","减值计提只看账龄区间。","基于预测的付款行为估算预期信用损失（ECL）。","Predictive",1,""]
+  ]}
+ ]},
+ R2R: { name:"Record-to-Report", color:"--r2r", blurb:"从会计分录到对外披露的报表。", l1:[
+  { name:"主数据与总账", desc:"保持会计科目表整洁。", l2:[
+   ["科目表与总账科目维护","GL / 财务主数据","科目申请描述不清，各实体之间的映射逐渐走样。","根据申请描述和相似科目建议科目、映射和属性。","Generative",1,""]
+  ]},
+  { name:"日常账务处理", desc:"准确记录发生的业务。", l2:[
+   ["手工会计分录","总账会计","大量分录来自 Excel，复核有限。","根据描述或附件起草分录；对每一笔手工过账做异常检查。","Anomaly",2,"Joule in S/4HANA Finance"],
+   ["预提（Accruals）","总账会计","预提金额依据邮件和未清 PO 报表估算。","基于未清 PO、收货和历史数据预测预提金额，生成分录供审批。","Predictive",3,"SAP S/4HANA Accrual Management"],
+   ["固定资产","资产会计","资本化与费用化、使用年限的判断不一致。","对发票分类，并建议资产类别和使用年限。","Predictive",1,""]
+  ]},
+  { name:"关联交易", desc:"对齐集团内各实体之间的往来余额。", l2:[
+   ["关联往来匹配与对账","关联交易会计","差异在关账时才暴露，靠邮件追查。","跨实体 ML 匹配，预测差异原因代码，自动生成调整建议。","Matching",3,"SAP S/4HANA Intercompany Matching & Reconciliation"]
+  ]},
+  { name:"期末关账", desc:"对账并关账。", l2:[
+   ["银行对账","司库 / 总账","未达账项堆积，需要人工写规则。","ML 匹配银行流水，并从会计的处理决定中持续学习。","Matching",2,"S/4HANA bank reconciliation (ML)"],
+   ["GR/IR 清账","总账 / AP","长期挂账的 GR/IR 余额需逐笔调查。","预测每笔未清 GR/IR 项目的原因和下一步处理。","Predictive",2,"S/4HANA intelligent GR/IR reconciliation"],
+   ["资产负债表科目对账","总账会计","不论风险高低，每个科目每月都要对账。","对科目做风险评分，低风险科目自动确认，并起草差异说明。","Anomaly",2,""],
+   ["关账流程编排","关账负责人","关账任务用 Excel 跟踪，瓶颈发现得太晚。","预测关账日历上有延误风险的任务，提前提醒负责人。","Predictive",2,"SAP Advanced Financial Closing"]
+  ]},
+  { name:"合并与报告", desc:"向管理层和监管机构报告结果。", l2:[
+   ["集团合并","Group Reporting 集团报告","抵销和汇率问题在周期后段才发现。","合并运行前对报送数据做异常检查。","Anomaly",2,"SAP S/4HANA Group Reporting"],
+   ["管理报告与差异分析","FP&A / 管理会计","每月写差异分析说明要花好几天。","GenAI 起草差异分析说明；管理者可用自然语言提问。","Generative",3,"SAP Analytics Cloud (Just Ask, Joule)"],
+   ["税务与法定报告","税务 / 法定报告","法规变化跟踪和税码检查靠人工。","监控法规更新；标出过账中可能用错的税码。","Anomaly",1,""],
+   ["审计支持","内审 / 财务控制","抽样测试，人工准备审计证据包。","全量数据分析，自动收集审计证据。","Anomaly",2,""]
+  ]}
+ ]}
+},
+int: {
+ Activate: { name:"SAP Activate", color:"--int", blurb:"Discover → Prepare → Explore → Realize → Deploy → Run。", l1:[
+  { name:"Discover 发现", desc:"明确机会，形成业务案例。", l2:[
+   ["业务案例与价值评估","Solution Architect / Value Advisor","基准数据通用，针对客户定制很慢。","GenAI 消化客户年报和公开披露信息；流程挖掘量化价值空间。","Generative",2,"SAP Signavio Process Insights"],
+   ["现状流程调研","流程顾问","基于访谈的现状梳理主观且耗时。","基于客户数据做流程挖掘，并由 AI 总结流程变体和瓶颈。","Predictive",2,"SAP Signavio Process Intelligence"],
+   ["方案建议书与估算","Engagement Lead / 售前","估算结果因人而异；RFP 回复每次从头写。","基于历史项目实际数据估算；GenAI 从方案库起草 RFP 回复。","Generative",3,""]
+  ]},
+  { name:"Prepare 准备", desc:"组建团队，确定计划和系统环境。", l2:[
+   ["项目计划与治理","项目经理 / PMO","基于模板手工调整计划；RAID 日志逐渐失真。","根据 Activate 路线图和范围生成计划；每周汇总 RAID 和项目状态。","Generative",2,"SAP Cloud ALM"],
+   ["系统环境与开通","Technical Architect / Basis","容量规划和系统搭建依赖个人经验。","Sizing 助手加脚本化开通，并对照标准做检查。","Agentic",1,""],
+   ["团队入项","PMO","新成员需要数周才能理解范围和既有决策。","基于设计文档和决策记录的项目知识助手，随问随答。","Generative",2,""],
+   ["遗留系统与自开发代码评估","Technical Architect / 开发","Brownfield 自开发代码分析耗时长、靠人工。","AI 解读遗留 ABAP，按使用情况归类，建议废弃 / 回归标准 / clean core 方案。","Generative",3,"SAP Readiness Check, Custom Code Migration"]
+  ]},
+  { name:"Explore 探索", desc:"Fit-to-standard 与方案设计。", l2:[
+   ["Fit-to-standard 研讨会","功能顾问（FI、MM、SD）","会前准备和会议记录工作量大，结论散落在 PPT 里。","会议转写，起草决策和 backlog 条目，并映射到 Best Practice scope item。","Generative",3,"SAP Cloud ALM"],
+   ["差异分析与 backlog","功能负责人 / Solution Architect","标准功能能满足的场景也被提成差异，clean core 被侵蚀。","逐条对照标准功能、SAP Notes 和 BTP 选项检查差异，推荐最干净的方案。","Generative",3,"Joule for consultants"],
+   ["功能说明书（FS）","功能顾问","编写 RICEFW 功能说明书慢，质量参差不齐。","GenAI 基于 backlog 和研讨会记录，按项目模板起草说明书。","Generative",3,""],
+   ["数据映射","数据迁移顾问","遗留系统到 S/4 的逐字段映射繁琐。","基于数据剖析和历史项目建议字段映射和转换规则。","Matching",2,"SAP S/4HANA Migration Cockpit"]
+  ]},
+  { name:"Realize 实现", desc:"开发、配置、测试。", l2:[
+   ["系统配置","功能顾问","多个公司代码重复配置，文档滞后。","自动生成配置文档和检查；助手回答配置问题。","Generative",2,""],
+   ["开发（RICEFW）","ABAP / BTP 开发","编码、单元测试和阅读遗留代码占用大部分开发时间。","在 IDE 中生成代码、生成单元测试、解释代码。","Generative",3,"Joule for developers, SAP Build Code"],
+   ["代码评审与技术说明书","开发负责人","代码评审标准不一，技术说明书事后补写。","AI 按 clean core 规则评审代码；从代码自动生成技术说明书。","Generative",2,"ABAP Test Cockpit"],
+   ["数据加载轮次","数据迁移团队","每轮 mock 加载都重复出现同样的错误。","按原因聚类加载错误，建议清洗方案并识别重复数据。","Anomaly",2,""],
+   ["测试（单元、SIT、UAT）","测试经理 / 测试人员 / 关键用户","手工编写和执行测试脚本，缺陷分派慢。","从需求生成测试用例，自动执行，缺陷去重并分派。","Agentic",3,"SAP Cloud ALM, Tricentis test automation"],
+   ["权限与角色","安全顾问","角色设计靠人工，SoD 冲突发现得晚。","根据任务使用情况建议角色；在设计阶段预测 SoD 冲突。","Predictive",2,"SAP GRC Access Control"],
+   ["培训材料","变革 / 培训负责人","配置一改，操作手册就过时。","根据录制的业务操作生成多语言手册和模拟练习。","Generative",2,"SAP Enable Now"]
+  ]},
+  { name:"Deploy 部署", desc:"切换并上线。", l2:[
+   ["切换计划与演练","Cutover Manager","上千个任务在 Excel 中管理，依赖关系容易遗漏。","检查依赖和关键路径；根据演练耗时预测高风险任务。","Predictive",2,""],
+   ["最终用户准备","变革经理","培训一刀切，采纳风险不可见。","按用户群提供个性化学习路径和准备度评分。","Predictive",1,""],
+   ["上线支持（Hypercare）","支持负责人","上线后工单激增，同样的问题反复出现。","工单分类和分派；从知识库推荐解决方案；回答操作类问题。","Agentic",3,""]
+  ]},
+  { name:"Run 运维", desc:"运营并持续优化。", l2:[
+   ["事件管理（AMS）","AMS 顾问","重复的一线工单多，根因分析靠人工。","聊天机器人分流操作类问题；基于日志和历史工单给出根因建议。","Agentic",3,"SAP Cloud ALM"],
+   ["版本升级影响分析","Solution Architect","每次版本发布都要做回归测试和自开发代码影响分析。","对照客户的范围和代码解读 release notes，生成回归测试集。","Generative",2,""],
+   ["价值实现跟踪","Engagement Lead","上线后承诺的收益很少被跟踪。","用流程挖掘跟踪业务案例 KPI，并解释指标变化。","Predictive",2,"SAP Signavio Process Insights"]
+  ]}
+ ]}
+}
+};
+
+/* ===== UI ===== */
+const TYPES = ["Generative","Predictive","Document AI","Matching","Anomaly","Agentic"];
+const IMP = ["","较低","中等","高"];
+const st = {lens:"ext", proc:"S2P", l1:-1, types:new Set(), imp:0, q:""};
+try{ const s = JSON.parse(localStorage.getItem("sapai")||"{}"); if(s.lens && DATA[s.lens]) { st.lens=s.lens; st.proc=Object.keys(DATA[s.lens])[0]; if(s.proc && DATA[s.lens][s.proc]) st.proc=s.proc; } }catch(e){}
+const save=()=>{try{localStorage.setItem("sapai",JSON.stringify({lens:st.lens,proc:st.proc}))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const personIcon='<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5 6-5s6 1.7 6 5" fill="currentColor"/></svg>';
+const prefix = (lens,proc)=> lens==="ext"?proc:"ACT";
+
+function match(r){
+  if(st.types.size && !st.types.has(r[4])) return false;
+  if(r[5] < st.imp) return false;
+  if(st.q){ const q=st.q.toLowerCase(); if(!r.slice(0,5).concat(r[6]).join(" ").toLowerCase().includes(q)) return false; }
+  return true;
+}
+
+function render(){
+  const lensData = DATA[st.lens], p = lensData[st.proc];
+  document.documentElement.style.setProperty("--accent", `var(${p.color})`);
+  for(const b of document.querySelectorAll(".lens button")) b.setAttribute("aria-pressed", b.dataset.lens===st.lens);
+  $("procs").innerHTML = Object.entries(lensData).map(([k,v])=>{
+    const n=v.l1.reduce((a,l)=>a+l.l2.length,0);
+    return `<button data-proc="${k}" aria-pressed="${k===st.proc}">${esc(v.name)}<small>${n} 个 L2</small></button>`}).join("");
+  const pre = prefix(st.lens, st.proc);
+  $("ribbon").innerHTML = p.l1.map((l,i)=>{
+    const n=l.l2.filter(match).length;
+    return `<button data-l1="${i}" aria-pressed="${st.l1===i}" title="${esc(l.desc)}"><span class="code">${pre}-${i+1}</span><span class="nm">${esc(l.name)}</span><span class="ct">显示 ${n} / ${l.l2.length}</span></button>`}).join("");
+  $("types").innerHTML = TYPES.map(t=>`<button class="fchip" data-type="${t}" aria-pressed="${st.types.has(t)}">${t}</button>`).join("");
+  for(const b of document.querySelectorAll("[data-imp]")) b.setAttribute("aria-pressed", +b.dataset.imp===st.imp);
+  let total=0, shown=0, html="";
+  p.l1.forEach((l,i)=>{
+    total+=l.l2.length;
+    if(st.l1>=0 && st.l1!==i) return;
+    const rows=l.l2.map((r,j)=>[r,j]).filter(([r])=>match(r));
+    shown+=rows.length;
+    if(!rows.length) return;
+    html+=`<section class="l1" id="l1-${i}"><div class="l1head"><span class="code">${pre}-${i+1}</span><h2>${esc(l.name)}</h2><p>${esc(l.desc)}</p></div>`;
+    html+=rows.map(([r,j])=>`<article class="l2">
+      <div class="who"><span class="code">${pre}-${i+1}.${j+1} · L2</span><h3>${esc(r[0])}</h3>
+        <span class="team">${personIcon}${esc(r[1])}</span>
+        <div class="meta"><span class="tag">${esc(r[4])}</span></div>
+        <div class="impact" aria-label="价值 ${r[5]} / 3">${[1,2,3].map(k=>`<i class="${k<=r[5]?"on":""}"></i>`).join("")}<span>${IMP[r[5]]}价值</span></div>
+      </div>
+      <div class="pain"><span class="col-h">痛点</span><p>${esc(r[2])}</p></div>
+      <div class="ai"><span class="col-h">AI 如何帮助</span><p>${esc(r[3])}</p>${r[6]?`<div class="sapref">SAP 现有能力：<b>${esc(r[6])}</b></div>`:""}</div>
+    </article>`).join("");
+    html+=`</section>`;
+  });
+  $("out").innerHTML = html || `<div class="empty">没有符合筛选条件的机会点。请清除部分筛选或搜索词。</div>`;
+  $("count").textContent = `显示 ${shown} / ${total} 个 L2 ${st.lens==="ext"?"流程":"活动"}`;
+}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.lens){ st.lens=b.dataset.lens; st.proc=Object.keys(DATA[st.lens])[0]; st.l1=-1; save(); }
+  else if(b.dataset.proc){ st.proc=b.dataset.proc; st.l1=-1; save(); }
+  else if(b.dataset.l1!==undefined){ const i=+b.dataset.l1; st.l1 = st.l1===i?-1:i; }
+  else if(b.dataset.type){ st.types.has(b.dataset.type)?st.types.delete(b.dataset.type):st.types.add(b.dataset.type); }
+  else if(b.dataset.imp!==undefined){ st.imp=+b.dataset.imp; }
+  else return;
+  render();
+});
+$("q").addEventListener("input",e=>{st.q=e.target.value.trim(); render();});
+render();
+</script>
+
+</body>
+</html>
