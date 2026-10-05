@@ -27,6 +27,7 @@
   --accent:#ffe600; --on-accent:#1a1a24; --ink:#ffe600;
   --pain:#f08a82; --pain-bg:#33201f; --gain:#5fd3a2; --gain-bg:#16291f; --chip:#2f2f3b; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
@@ -104,6 +105,10 @@ section.l1{margin-bottom:30px}
 .deliv li{margin:1px 0}
 .saving{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-top:10px;font-size:12px;color:var(--muted)}
 .saving b{font-size:13px;background:var(--accent);color:var(--on-accent);border-radius:4px;padding:1px 8px}
+.sum-top{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.sum-toggle{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px}
+.sum-toggle:hover{border-color:var(--fg)}
+#sum-body p{margin-top:10px}
 #summary{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:6px 0 16px}
 .sum-head h2{font-size:18px}
 .sum-head p{margin:6px 0 12px;color:var(--muted);font-size:13.5px;max-width:60em}
@@ -130,7 +135,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
 }
 @media (prefers-reduced-motion:no-preference){.l2{transition:border-color .15s}.l2:hover{border-color:var(--accent)}}
 </style>
-<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<style>body{margin:0}img{max-width:100%}</style>
 </head>
 <body>
 
@@ -148,8 +153,8 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
     </div>
   </header>
 
-  <div class="procs" id="procs" role="group" aria-label="流程"></div>
   <div id="summary" hidden></div>
+  <div class="procs" id="procs" role="group" aria-label="流程"></div>
   <nav class="ribbon" id="ribbon" aria-label="L1 步骤"></nav>
 
   <div class="filters">
@@ -318,9 +323,21 @@ int: {
 /* ===== UI ===== */
 const TYPES = ["Generative","Predictive","Document AI","Matching","Anomaly","Agentic"];
 const LVL = {ext:["","较低","中等","高"], int:["","较低","中等","高"]};
-const st = {lens:"ext", proc:"S2P", l1:-1, types:new Set(), imp:0, q:""};
+const st = {lens:"ext", proc:"S2P", l1:-1, types:new Set(), imp:0, q:"", sumOpen:true};
 try{ const s = JSON.parse(localStorage.getItem("sapai")||"{}"); if(s.lens && DATA[s.lens]) { st.lens=s.lens; st.proc=Object.keys(DATA[s.lens])[0]; if(s.proc && DATA[s.lens][s.proc]) st.proc=s.proc; } }catch(e){}
-const save=()=>{try{localStorage.setItem("sapai",JSON.stringify({lens:st.lens,proc:st.proc}))}catch(e){}};
+try{ if(localStorage.getItem("sapai_sum")==="0") st.sumOpen=false; }catch(e){}
+const save=()=>{try{localStorage.setItem("sapai",JSON.stringify({lens:st.lens,proc:st.proc}));localStorage.setItem("sapai_sum",st.sumOpen?"1":"0")}catch(e){}};
+// Summary panel: heading row with an expand / collapse toggle; bars only while expanded.
+function sumPanel(title, desc, rows){
+  $("summary").hidden=false;
+  $("summary").innerHTML=`<div class="sum-head"><div class="sum-top"><h2>${title}</h2>
+    <button class="sum-toggle" data-sum="1" aria-expanded="${st.sumOpen}" aria-controls="sum-body">${st.sumOpen?"收起图表":"展开图表"}<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="${st.sumOpen?"M2 8l4-4 4 4":"M2 4l4 4 4-4"}" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+    <div id="sum-body" ${st.sumOpen?"":"hidden"}><p>${desc}</p><div class="bars">${rows}</div></div></div>`;
+}
+function jumpToDetail(){
+  const t=$("procs").hidden?$("ribbon"):$("procs");
+  t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const personIcon='<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5 6-5s6 1.7 6 5" fill="currentColor"/></svg>';
@@ -358,23 +375,17 @@ function summary(p){
       <span class="track"><span class="fill" style="width:${t.score/max*100}%"></span></span>
       <span class="bv">${t.score}</span>
       <span class="bh" title="${esc(t.hi.map(o=>o.name).join("、"))}">${t.hi.length?`${t.hi.length} 个高价值：${esc(t.hi.map(o=>o.name).join("、"))}`:"暂无高价值项"}</span></button>`).join("");
-    $("summary").hidden=false;
-    $("summary").innerHTML=`<div class="sum-head"><h2>价值视角：机会集中在哪里</h2>
-      <p>S2P、O2C、R2R 全部 L1 按价值得分从高到低排列。得分是该 L1 下各 L2 价值评级（1–3）之和，反映机会的总量；右侧列出其中的高价值 L2。点击任一行可跳转到对应流程和 L1 查看详情。评级为定性判断，待结合客户数据校准。</p></div>
-      <div class="bars">${rows}</div>`;
+    sumPanel("价值视角：机会集中在哪里", `S2P、O2C、R2R 全部 L1 按价值得分从高到低排列。得分是该 L1 下各 L2 价值评级（1–3）之和，反映机会的总量；右侧列出其中的高价值 L2。点击任一行可跳转到对应流程和 L1 查看详情。评级为定性判断，待结合客户数据校准。`, rows);
     return;
   }
   const rows = p.l1.map((l,i)=>{
     const all=l.l2.map(row), hi=all.filter(o=>o.lvl===3).length;
-    return `<button class="bar" data-l1="${i}" aria-pressed="${st.l1===i}">
+    return `<button class="bar" data-sproc="${st.proc}" data-l1="${i}" aria-pressed="${st.l1===i}">
       <span class="bn">${esc(l.name)}</span>
       <span class="track"><span class="fill" style="width:${l.share/45*100}%"></span></span>
       <span class="bv">${l.share}%</span>
       <span class="bh">${hi} 个高节省点</span></button>`}).join("");
-  $("summary").hidden=false;
-  $("summary").innerHTML = `<div class="sum-head"><h2>成本视角：工作量花在哪里</h2>
-    <p>各阶段占 SI 实施总工作量的示意比例（典型 S/4HANA 项目，按经验假设，待用 EY 项目实际数据校准）。Realize 和 Explore 合计约六成，是 AI 节省的主战场；Explore 阶段压缩 RICEFW 数量，会连带减少后面的开发、测试和运维成本。点击某一阶段可筛选。</p></div>
-    <div class="bars">${rows}</div>`;
+  sumPanel("成本视角：工作量花在哪里", `各阶段占 SI 实施总工作量的示意比例（典型 S/4HANA 项目，按经验假设，待用 EY 项目实际数据校准）。Realize 和 Explore 合计约六成，是 AI 节省的主战场；Explore 阶段压缩 RICEFW 数量，会连带减少后面的开发、测试和运维成本。点击某一阶段可筛选。`, rows);
 }
 
 function render(){
@@ -383,6 +394,7 @@ function render(){
   $("procs").innerHTML = Object.entries(lensData).map(([k,v])=>{
     const n=v.l1.reduce((a,l)=>a+l.l2.length,0);
     return `<button data-proc="${k}" aria-pressed="${k===st.proc}">${esc(v.name)}<small>${n} 个 L2</small></button>`}).join("");
+  $("procs").hidden = Object.keys(lensData).length<2;
   summary(p);
   const pre = prefix(st.lens, st.proc);
   $("ribbon").innerHTML = p.l1.map((l,i)=>{
@@ -422,7 +434,8 @@ function render(){
 document.addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.lens){ st.lens=b.dataset.lens; st.proc=Object.keys(DATA[st.lens])[0]; st.l1=-1; save(); }
-  else if(b.dataset.sproc){ const same=st.proc===b.dataset.sproc && st.l1===+b.dataset.l1; st.proc=b.dataset.sproc; st.l1=same?-1:+b.dataset.l1; save(); render(); if(!same) document.getElementById("ribbon").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"}); return; }
+  else if(b.dataset.sproc){ const same=st.proc===b.dataset.sproc && st.l1===+b.dataset.l1; st.proc=b.dataset.sproc; st.l1=same?-1:+b.dataset.l1; save(); render(); if(!same) jumpToDetail(); return; }
+  else if(b.dataset.sum){ st.sumOpen=!st.sumOpen; save(); }
   else if(b.dataset.proc){ st.proc=b.dataset.proc; st.l1=-1; save(); }
   else if(b.dataset.l1!==undefined){ const i=+b.dataset.l1; st.l1 = st.l1===i?-1:i; }
   else if(b.dataset.type){ st.types.has(b.dataset.type)?st.types.delete(b.dataset.type):st.types.add(b.dataset.type); }
