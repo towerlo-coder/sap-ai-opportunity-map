@@ -3,35 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
 <title>SAP AI Opportunity Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
 <style>
 /* Layout: a process ribbon (L1 chain) on top, filters beneath, then L1 sections holding L2 opportunity rows (pain → AI). */
 :root{
-  --bg:#f3f5f6; --surface:#ffffff; --sunk:#e8ecee; --fg:#14202b; --muted:#5a6873; --line:#d5dce0;
-  --s2p:#0f7a6c; --o2c:#3b4fc4; --r2r:#b0620c; --int:#7a3fa8;
-  --pain:#b4362f; --pain-bg:#fbeceb; --gain:#11734f; --gain-bg:#e6f4ee;
-  --chip:#eef1f3;
+  --bg:#f6f6f4; --surface:#ffffff; --sunk:#ebebe6; --fg:#2e2e38; --muted:#5f5f6b; --line:#d9d9d3;
+  --accent:#ffe600; --on-accent:#2e2e38; --ink:#2e2e38;
+  --pain:#b4362f; --pain-bg:#fbeceb; --gain:#11734f; --gain-bg:#e8f4ee;
+  --chip:#efefea;
   --f-display:"Bricolage Grotesque", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --f-body:"IBM Plex Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, Menlo, "Noto Sans SC", monospace;
-  --accent:var(--s2p);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f161c; --surface:#17212a; --sunk:#1d2933; --fg:#e4eaee; --muted:#93a2ad; --line:#2a3743;
-  --s2p:#3fc2ae; --o2c:#8c9cff; --r2r:#f0a24a; --int:#c58cf0;
-  --pain:#f08a82; --pain-bg:#2c1c1d; --gain:#5fd3a2; --gain-bg:#14281f; --chip:#22303b; color-scheme:dark}}
+  --bg:#1a1a24; --surface:#23232f; --sunk:#2a2a36; --fg:#ececf0; --muted:#a3a3b0; --line:#3a3a47;
+  --accent:#ffe600; --on-accent:#1a1a24; --ink:#ffe600;
+  --pain:#f08a82; --pain-bg:#33201f; --gain:#5fd3a2; --gain-bg:#16291f; --chip:#2f2f3b; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f161c; --surface:#17212a; --sunk:#1d2933; --fg:#e4eaee; --muted:#93a2ad; --line:#2a3743;
-  --s2p:#3fc2ae; --o2c:#8c9cff; --r2r:#f0a24a; --int:#c58cf0;
-  --pain:#f08a82; --pain-bg:#2c1c1d; --gain:#5fd3a2; --gain-bg:#14281f; --chip:#22303b; color-scheme:dark}
+  --bg:#1a1a24; --surface:#23232f; --sunk:#2a2a36; --fg:#ececf0; --muted:#a3a3b0; --line:#3a3a47;
+  --accent:#ffe600; --on-accent:#1a1a24; --ink:#ffe600;
+  --pain:#f08a82; --pain-bg:#33201f; --gain:#5fd3a2; --gain-bg:#16291f; --chip:#2f2f3b; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
 button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
 header.top{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
 .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -41,11 +41,11 @@ h1{font-size:clamp(28px,4.4vw,42px);font-weight:700;line-height:1.15;margin-top:
 .lens button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 16px;text-align:left;min-width:220px;flex:1}
 .lens button b{display:block;font-family:var(--f-display);font-size:18px}
 .lens button span{font-size:13px;color:var(--muted)}
-.lens button[aria-pressed="true"]{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.lens button[aria-pressed="true"]{border-color:var(--fg);box-shadow:inset 0 -4px 0 var(--accent), inset 0 0 0 1px var(--fg)}
 
 .procs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 10px}
 .procs button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-weight:600}
-.procs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.procs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .procs small{font-weight:400;opacity:.8;margin-left:6px}
 
 .ribbon{display:flex;overflow-x:auto;gap:0;margin:6px 0 18px;padding-bottom:4px}
@@ -53,11 +53,11 @@ h1{font-size:clamp(28px,4.4vw,42px);font-weight:700;line-height:1.15;margin-top:
   clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,14px 50%)}
 .ribbon button:first-child{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%);border-left:1px solid var(--line);border-radius:8px 0 0 8px;padding-left:16px}
 .ribbon button+button{margin-left:-8px}
-.ribbon .code{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+.ribbon .code{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 .ribbon .nm{display:block;font-weight:600;font-size:14px;line-height:1.3}
 .ribbon .ct{font-size:12px;color:var(--muted)}
-.ribbon button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
-.ribbon button[aria-pressed="true"] .code,.ribbon button[aria-pressed="true"] .ct{color:var(--bg);opacity:.85}
+.ribbon button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.ribbon button[aria-pressed="true"] .code,.ribbon button[aria-pressed="true"] .ct{color:var(--on-accent);opacity:.8}
 
 .filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 14px;background:var(--sunk);border-radius:10px;margin-bottom:22px}
 .filters .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -68,8 +68,9 @@ h1{font-size:clamp(28px,4.4vw,42px);font-weight:700;line-height:1.15;margin-top:
 .count{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 
 section.l1{margin-bottom:30px}
-.l1head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;border-bottom:2px solid var(--accent);padding-bottom:6px;margin-bottom:12px}
-.l1head .code{font-family:var(--f-mono);font-size:13px;color:var(--accent)}
+.l1head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;border-bottom:3px solid var(--accent);padding-bottom:6px;margin-bottom:12px}
+.l1head .code{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.l1head .share{font-size:12px;background:var(--accent);color:var(--on-accent);border-radius:4px;padding:1px 8px;font-weight:600}
 .l1head h2{font-size:22px;font-weight:700}
 .l1head p{margin:0;color:var(--muted);font-size:14px;flex-basis:100%}
 
@@ -92,10 +93,30 @@ section.l1{margin-bottom:30px}
 .sapref b{font-weight:600;color:var(--fg)}
 .impact{display:inline-flex;gap:2px;align-items:center;font-size:11.5px;color:var(--muted);margin-top:10px}
 .impact i{width:14px;height:6px;border-radius:2px;background:var(--line);display:inline-block}
-.impact i.on{background:var(--accent)}
+.impact i.on{background:var(--ink)}
 .impact span{margin-left:6px}
 .empty{padding:40px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px}
 
+
+.deliv{margin-top:10px}
+.deliv .col-h{color:var(--muted)}
+.deliv ul{margin:0;padding-left:1.1em;font-size:13px}
+.deliv li{margin:1px 0}
+.saving{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-top:10px;font-size:12px;color:var(--muted)}
+.saving b{font-size:13px;background:var(--accent);color:var(--on-accent);border-radius:4px;padding:1px 8px}
+#summary{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:6px 0 16px}
+.sum-head h2{font-size:18px}
+.sum-head p{margin:6px 0 12px;color:var(--muted);font-size:13.5px;max-width:60em}
+.bars{display:grid;gap:4px}
+.bar{display:grid;grid-template-columns:9em minmax(0,1fr) 3em 7.5em;gap:10px;align-items:center;border:0;background:transparent;text-align:left;padding:4px 6px;border-radius:6px}
+.bar:hover{background:var(--sunk)}
+.bar[aria-pressed="true"]{background:var(--sunk);box-shadow:inset 3px 0 0 var(--accent)}
+.bar .bn{font-size:13.5px;font-weight:600;min-width:0}
+.bar .track{height:12px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bar .fill{display:block;height:100%;background:var(--accent);border-right:1px solid var(--ink)}
+.bar .bv{font-variant-numeric:tabular-nums;font-size:13px;text-align:right}
+.bar .bh{font-size:12px;color:var(--muted)}
+@media (max-width:600px){.bar{grid-template-columns:7em minmax(0,1fr) 3em}.bar .bh{display:none}}
 footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
 @media (max-width:820px){
   .l2{grid-template-columns:1fr}
@@ -114,20 +135,21 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
     <div>
       <div class="eyebrow">AI Opportunity Map · SAP 项目</div>
       <h1>AI 在 SAP 项目中的价值落点</h1>
-      <p class="lede">同一个项目，两个视角。“客户运营”看 AI 如何提升我们所实施财务流程的效率；“项目实施”看 AI 如何提升顾问的交付效率。</p>
+      <p class="lede">同一个项目，两个视角。“客户运营”看 AI 如何提升我们所实施财务流程的效率；“项目实施”从 EY 作为 SI 实施伙伴的角度，看 AI 能在哪些活动和交付物上降低实施成本。</p>
     </div>
     <div class="lens" role="group" aria-label="视角">
       <button id="lens-ext" aria-pressed="true" data-lens="ext"><b>客户运营（External）</b><span>S2P · O2C · R2R，按 L1 / L2 拆解</span></button>
-      <button id="lens-int" aria-pressed="false" data-lens="int"><b>项目实施（Internal）</b><span>SAP Activate 各阶段，按 L1 / L2 拆解</span></button>
+      <button id="lens-int" aria-pressed="false" data-lens="int"><b>项目实施（Internal）</b><span>EY 作为 SI：各阶段交付物与 AI 降本点</span></button>
     </div>
   </header>
 
   <div class="procs" id="procs" role="group" aria-label="流程"></div>
+  <div id="summary" hidden></div>
   <nav class="ribbon" id="ribbon" aria-label="L1 步骤"></nav>
 
   <div class="filters">
     <div class="grp"><span class="lbl">AI 类型</span><span id="types" class="grp"></span></div>
-    <div class="grp"><span class="lbl">价值</span>
+    <div class="grp"><span class="lbl" id="imp-lbl">价值</span>
       <button class="fchip" id="imp-all" aria-pressed="true" data-imp="0">全部</button>
       <button class="fchip" id="imp-hi" aria-pressed="false" data-imp="3">仅高价值</button>
     </div>
@@ -138,7 +160,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
   <main id="out"></main>
 
   <footer>
-    讨论稿。价值评级是对效率和风控收益的定性判断，不是实测数据。“SAP 现有能力”仅示例说明 SAP 产品组合中已有类似功能；对客户引用前请核实当前可用性、授权和版本。
+    讨论稿。价值评级、节省潜力区间和各阶段工作量占比都是基于经验的示意假设，不是实测数据，需用 EY 项目实际数据校准。“SAP 现有能力”仅示例说明 SAP 产品组合中已有类似功能；对客户引用前请核实当前可用性、授权和版本。
   </footer>
 </div>
 
@@ -148,7 +170,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:60em}
    AI 类型（保留英文作为筛选键）: Generative, Predictive, Document AI, Matching, Anomaly, Agentic */
 const DATA = {
 ext: {
- S2P: { name:"Source-to-Pay", color:"--s2p", blurb:"从采购策略到向供应商付款。", l1:[
+ S2P: { name:"Source-to-Pay", blurb:"从采购策略到向供应商付款。", l1:[
   { name:"寻源与供应商管理", desc:"决定买什么、向谁买、以什么条款买。", l2:[
    ["支出分析与品类策略","Category Management 品类管理","支出分散在多个 ERP 和公司卡中，分类不准确、不一致，品类计划依赖过时的 Excel 数据。","ML 自动将支出明细归类到统一分类体系；GenAI 用通俗语言总结品类趋势和降本机会。","Predictive",3,"SAP Ariba Spend Analysis"],
    ["供应商准入与资质审核","Supplier Management 供应商管理","问卷、证书和银行/税务文件靠人工核对，准入周期长达数周。","Document AI 读取证书和银行函件，对照工商/税务登记自动校验，在人工复核前先标出缺漏。","Document AI",2,"SAP Ariba Supplier Lifecycle & Performance"],
@@ -177,7 +199,7 @@ ext: {
    ["供应商主数据维护","主数据团队","重复供应商和未经核实的银行信息变更带来风险。","识别重复供应商，核验银行信息，并用外部数据补全主数据。","Matching",2,"SAP Master Data Governance"]
   ]}
  ]},
- O2C: { name:"Order-to-Cash", color:"--o2c", blurb:"从客户准入到回款入账。", l1:[
+ O2C: { name:"Order-to-Cash", blurb:"从客户准入到回款入账。", l1:[
   { name:"客户与信用管理", desc:"了解客户，确定可承受的风险。", l2:[
    ["客户准入与主数据","销售运营 / 主数据","客户主数据不完整、重复，导致开票和税务错误。","从工商登记自动填充，模糊匹配去重，录入时即校验税号。","Matching",2,"SAP Master Data Governance"],
    ["信用评估与额度","Credit Management 信用管理","信用额度一年一评、长期不变，人工审核拖慢订单。","结合付款行为和外部数据做预测性信用评分，动态建议信用额度。","Predictive",3,"SAP Credit Management"]
@@ -202,7 +224,7 @@ ext: {
    ["坏账与减值计提","AR / 财务控制","减值计提只看账龄区间。","基于预测的付款行为估算预期信用损失（ECL）。","Predictive",1,""]
   ]}
  ]},
- R2R: { name:"Record-to-Report", color:"--r2r", blurb:"从会计分录到对外披露的报表。", l1:[
+ R2R: { name:"Record-to-Report", blurb:"从会计分录到对外披露的报表。", l1:[
   { name:"主数据与总账", desc:"保持会计科目表整洁。", l2:[
    ["科目表与总账科目维护","GL / 财务主数据","科目申请描述不清，各实体之间的映射逐渐走样。","根据申请描述和相似科目建议科目、映射和属性。","Generative",1,""]
   ]},
@@ -229,42 +251,60 @@ ext: {
  ]}
 },
 int: {
- Activate: { name:"SAP Activate", color:"--int", blurb:"Discover → Prepare → Explore → Realize → Deploy → Run。", l1:[
-  { name:"Discover 发现", desc:"明确机会，形成业务案例。", l2:[
-   ["业务案例与价值评估","Solution Architect / Value Advisor","基准数据通用，针对客户定制很慢。","GenAI 消化客户年报和公开披露信息；流程挖掘量化价值空间。","Generative",2,"SAP Signavio Process Insights"],
-   ["现状流程调研","流程顾问","基于访谈的现状梳理主观且耗时。","基于客户数据做流程挖掘，并由 AI 总结流程变体和瓶颈。","Predictive",2,"SAP Signavio Process Intelligence"],
-   ["方案建议书与估算","Engagement Lead / 售前","估算结果因人而异；RFP 回复每次从头写。","基于历史项目实际数据估算；GenAI 从方案库起草 RFP 回复。","Generative",3,""]
+ Activate: { name:"SAP Activate", blurb:"Discover → Prepare → Explore → Realize → Deploy → Run，外加贯穿全程的 PMO。", l1:[
+  { name:"Discover 发现", desc:"售前阶段，成本主要是 EY 自己承担的 pursuit 投入。", share:3, l2:[
+   ["RFP 解读与应答","Pursuit Lead / Engagement Manager",["RFP 应答书","需求合规矩阵 Compliance Matrix","资质与案例页"],"一份 RFP 往往要多人投入数周，大量内容从旧标书复制粘贴再改，质量取决于谁来写。","GenAI 拆解 RFP 生成合规矩阵，从 EY 历史标书和资质库检索相似内容，起草应答初稿，人工只做差异化部分。","Generative",3,"30–50%","GenAI + 标书库检索（RAG）"],
+   ["现状评估与价值案例","Solution Architect / Value Advisor",["现状评估报告","Business Case","价值地图 Value Map"],"价值测算依赖通用基准，针对客户定制慢，说服力有限。","GenAI 消化客户年报和公开信息；流程挖掘用客户真实数据量化价值空间。","Predictive",2,"20–30%","SAP Signavio Process Insights"],
+   ["方案架构与工作量估算","Solution Architect + Engagement Manager",["Solution Overview","工作量估算模型","人员配置计划 Staffing Plan"],"估算靠个人经验，同类范围不同人估差异大；低估直接变成项目超支。","用 EY 历史项目实际工时（按 scope item、RICEFW 数量、国家数）训练估算模型，给出区间并标出高风险假设。","Predictive",3,"降低超支风险",""],
+   ["SOW 与合同条款","Engagement Partner / 法务",["SOW","假设与依赖清单","RACI"],"假设和客户责任写得不全，后期变成范围争议和免费返工。","对照 EY 标准条款和历史争议案例检查 SOW，提示遗漏的假设和客户依赖。","Generative",2,"减少范围争议",""]
   ]},
-  { name:"Prepare 准备", desc:"组建团队，确定计划和系统环境。", l2:[
-   ["项目计划与治理","项目经理 / PMO","基于模板手工调整计划；RAID 日志逐渐失真。","根据 Activate 路线图和范围生成计划；每周汇总 RAID 和项目状态。","Generative",2,"SAP Cloud ALM"],
-   ["系统环境与开通","Technical Architect / Basis","容量规划和系统搭建依赖个人经验。","Sizing 助手加脚本化开通，并对照标准做检查。","Agentic",1,""],
-   ["团队入项","PMO","新成员需要数周才能理解范围和既有决策。","基于设计文档和决策记录的项目知识助手，随问随答。","Generative",2,""],
-   ["遗留系统与自开发代码评估","Technical Architect / 开发","Brownfield 自开发代码分析耗时长、靠人工。","AI 解读遗留 ABAP，按使用情况归类，建议废弃 / 回归标准 / clean core 方案。","Generative",3,"SAP Readiness Check, Custom Code Migration"]
+  { name:"Prepare 准备", desc:"组建团队、定计划、搭环境。", share:8, l2:[
+   ["项目启动与计划","Project Manager / PMO",["Project Charter","Project Management Plan","详细项目计划","Kick-off 材料"],"每个项目从模板手工裁剪计划和章程，花掉 PM 头几周。","根据 SOW 范围和 Activate roadmap 自动生成计划、章程和启动材料初稿。","Generative",2,"30–40%","SAP Cloud ALM"],
+   ["团队入项与项目标准","PMO / Workstream Leads",["Onboarding Pack","项目标准 Project Standards","文档模板"],"新成员（含 offshore 团队）要 1–2 周才能熟悉范围和既有决策，期间产出低但照样计费成本。","项目知识助手：基于 SOW、设计文档和决策记录随问随答，缩短上手时间。","Generative",2,"入项时间 ↓30–50%",""],
+   ["系统环境准备","Basis / Technical Architect",["Landscape 设计","Sizing 报告","Transport 策略"],"Sizing 和环境搭建依赖少数专家，排期容易卡住。","Sizing 助手和脚本化开通，按标准自动检查配置。","Agentic",1,"10–20%",""],
+   ["Brownfield 系统与自开发代码评估","Technical Architect / ABAP Lead",["Readiness Check 报告","自开发代码分析","Simplification Item 清单"],"成千上万个自开发对象逐个看用途和改造方式，耗时长，也是报价的主要不确定性。","AI 解读遗留 ABAP，按使用情况聚类，建议废弃 / 回归标准 / clean core 改造方式，并估算改造量。","Generative",3,"40–60%","SAP Readiness Check, ATC, Custom Code Migration"],
+   ["数据迁移策略与数据质量评估","Data Migration Lead",["Data Migration Strategy","迁移对象范围","数据质量评估报告"],"数据质量问题到 mock load 才暴露，导致加载轮次增加。","提前对遗留数据做剖析和异常检测，量化清洗工作量，把问题前移。","Anomaly",2,"20–30%",""]
   ]},
-  { name:"Explore 探索", desc:"Fit-to-standard 与方案设计。", l2:[
-   ["Fit-to-standard 研讨会","功能顾问（FI、MM、SD）","会前准备和会议记录工作量大，结论散落在 PPT 里。","会议转写，起草决策和 backlog 条目，并映射到 Best Practice scope item。","Generative",3,"SAP Cloud ALM"],
-   ["差异分析与 backlog","功能负责人 / Solution Architect","标准功能能满足的场景也被提成差异，clean core 被侵蚀。","逐条对照标准功能、SAP Notes 和 BTP 选项检查差异，推荐最干净的方案。","Generative",3,"Joule for consultants"],
-   ["功能说明书（FS）","功能顾问","编写 RICEFW 功能说明书慢，质量参差不齐。","GenAI 基于 backlog 和研讨会记录，按项目模板起草说明书。","Generative",3,""],
-   ["数据映射","数据迁移顾问","遗留系统到 S/4 的逐字段映射繁琐。","基于数据剖析和历史项目建议字段映射和转换规则。","Matching",2,"SAP S/4HANA Migration Cockpit"]
+  { name:"Explore 探索", desc:"Fit-to-standard 与方案设计，决定后面要建多少东西。", share:20, l2:[
+   ["Fit-to-standard 研讨会","功能顾问（FI / MM / SD 等）",["研讨会材料","Fit-to-Standard 结论","Delta Requirements"],"每场研讨会前要备材料，会后整理纪要和需求，顾问大量时间花在文书上。","按 scope item 生成研讨会材料；会议实时转写，自动整理结论并生成 backlog 条目。","Generative",3,"30–40%","SAP Cloud ALM"],
+   ["差异分析与设计决策","Solution Architect / Functional Leads",["Backlog（Delta Design）","设计决策记录","Clean Core 评估"],"标准功能能满足的场景也被提成差异，RICEFW 数量膨胀，后面开发、测试、运维成本都跟着涨。","逐条对照标准功能、SAP Notes 和 BTP 选项，推荐最干净的方案，在源头压缩 RICEFW 数量。","Generative",3,"RICEFW ↓10–20%","Joule for consultants"],
+   ["业务流程设计文档","功能顾问",["Business Process Design（BPD）","BPMN 流程图","组织结构设计"],"BPD 和流程图手工写、手工画，版本多、风格不统一。","从研讨会纪要和 backlog 起草 BPD 和 BPMN 流程图，按 EY 模板统一格式。","Generative",3,"40–50%","SAP Signavio Process Manager"],
+   ["功能说明书","功能顾问",["RICEFW 功能说明书（FS）"],"FS 写得慢、质量参差，开发拿到后反复澄清。","GenAI 根据 backlog 和设计文档起草 FS，自动检查必填项和验收标准是否完整。","Generative",3,"40–60%",""],
+   ["集成设计","Integration Architect",["接口清单 Interface Inventory","集成设计文档"],"遗留接口文档缺失，梳理接口清单靠访谈和翻代码。","从遗留系统配置和文档中抽取接口清单，推荐可复用的 SAP 标准 API。","Matching",2,"20–30%","SAP Business Accelerator Hub"],
+   ["数据迁移设计与映射","数据迁移顾问",["迁移对象清单","字段映射规则","清洗规则"],"遗留系统到 S/4 的逐字段映射繁琐，容易出错。","基于数据剖析和历史项目映射推荐字段映射与转换规则，顾问只做确认。","Matching",2,"30–40%","SAP S/4HANA Migration Cockpit"],
+   ["变革影响分析","OCM Lead",["Change Impact Assessment","干系人地图","OCM 计划"],"变革影响要从大量设计文档中人工归纳，常常做得粗。","从设计文档自动提取各角色的流程变化，生成变革影响清单初稿。","Generative",2,"30–40%",""],
+   ["测试策略","Test Lead",["Test Strategy","测试范围与环境计划"],"每个项目从头写测试策略，范围和覆盖率不一致。","按项目范围和 EY 模板生成测试策略初稿，并给出建议覆盖率。","Generative",1,"20–30%",""]
   ]},
-  { name:"Realize 实现", desc:"开发、配置、测试。", l2:[
-   ["系统配置","功能顾问","多个公司代码重复配置，文档滞后。","自动生成配置文档和检查；助手回答配置问题。","Generative",2,""],
-   ["开发（RICEFW）","ABAP / BTP 开发","编码、单元测试和阅读遗留代码占用大部分开发时间。","在 IDE 中生成代码、生成单元测试、解释代码。","Generative",3,"Joule for developers, SAP Build Code"],
-   ["代码评审与技术说明书","开发负责人","代码评审标准不一，技术说明书事后补写。","AI 按 clean core 规则评审代码；从代码自动生成技术说明书。","Generative",2,"ABAP Test Cockpit"],
-   ["数据加载轮次","数据迁移团队","每轮 mock 加载都重复出现同样的错误。","按原因聚类加载错误，建议清洗方案并识别重复数据。","Anomaly",2,""],
-   ["测试（单元、SIT、UAT）","测试经理 / 测试人员 / 关键用户","手工编写和执行测试脚本，缺陷分派慢。","从需求生成测试用例，自动执行，缺陷去重并分派。","Agentic",3,"SAP Cloud ALM, Tricentis test automation"],
-   ["权限与角色","安全顾问","角色设计靠人工，SoD 冲突发现得晚。","根据任务使用情况建议角色；在设计阶段预测 SoD 冲突。","Predictive",2,"SAP GRC Access Control"],
-   ["培训材料","变革 / 培训负责人","配置一改，操作手册就过时。","根据录制的业务操作生成多语言手册和模拟练习。","Generative",2,"SAP Enable Now"]
+  { name:"Realize 实现", desc:"配置、开发、测试，工作量最大的阶段。", share:42, l2:[
+   ["系统配置与配置文档","功能顾问",["系统配置","Configuration Document"],"多公司代码重复配置；配置文档滞后，常在上线前集中补写。","从系统配置变更自动生成配置文档；助手回答配置问题、检查配置一致性。","Generative",2,"文档 ↓50%+",""],
+   ["RICEFW 开发","ABAP / BTP Developers",["代码","技术说明书 Technical Spec","单元测试"],"编码、写单元测试和读遗留代码占开发大部分时间。","在 IDE 中生成代码和单元测试、解释遗留代码，从代码反向生成技术说明书。","Generative",3,"20–40%","Joule for developers, SAP Build Code"],
+   ["代码评审与质量","Development Lead",["Code Review 记录","ATC 检查结果"],"代码评审标准不一，问题流到测试阶段才被发现，返工更贵。","AI 按 clean core 和 EY 开发规范自动评审，评审人只看高风险部分。","Generative",2,"约 30%","ABAP Test Cockpit"],
+   ["集成开发","Integration Developers",["iFlow","接口映射","接口测试记录"],"接口字段映射手工做，测试数据难造。","根据映射规范推荐字段映射，自动生成接口测试数据。","Matching",2,"20–30%","SAP Integration Suite"],
+   ["测试用例设计","Test Lead / 功能顾问",["SIT 测试用例和脚本","UAT 测试脚本"],"测试脚本手工编写，量大且常与最新设计不一致。","从 FS、BPD 和流程图生成测试用例和测试数据，设计变更时自动提示受影响用例。","Generative",3,"40–60%","SAP Cloud ALM"],
+   ["测试执行与自动化","Testers / Key Users",["测试执行证据","回归测试集"],"SIT 多轮和回归测试都靠人手执行，占用大量顾问和客户时间。","把高频场景做成自动化回归，Agent 执行并截图留证。","Agentic",3,"回归执行 ↓50–70%","Tricentis test automation for SAP"],
+   ["缺陷管理","Test Lead / Workstream Leads",["缺陷日志","测试报告"],"缺陷描述不清、重复提交，分派靠人工判断。","自动去重和分类，按模块分派，并基于历史缺陷给出可能原因。","Predictive",2,"20–30%",""],
+   ["数据迁移 Mock 加载","数据迁移团队",["Mock Load 报告","数据对账报告"],"每轮 mock 都重复出现同类加载错误。","按原因聚类加载错误，建议清洗规则，自动生成对账报告。","Anomaly",2,"轮次 ↓1–2 轮",""],
+   ["权限角色设计与开发","Security Consultant",["角色矩阵 Role Matrix","SoD 分析"],"角色设计靠人工，SoD 冲突到 UAT 才发现。","根据岗位任务推荐角色，设计阶段预测 SoD 冲突。","Predictive",2,"20–30%","SAP GRC Access Control"],
+   ["培训材料开发","Training Lead",["培训手册","操作指引 Work Instructions","e-learning"],"配置一改材料就过时；多语言版本要重复制作。","根据录制的操作自动生成手册和模拟练习，一键生成多语言版本。","Generative",3,"40–60%","SAP Enable Now"]
   ]},
-  { name:"Deploy 部署", desc:"切换并上线。", l2:[
-   ["切换计划与演练","Cutover Manager","上千个任务在 Excel 中管理，依赖关系容易遗漏。","检查依赖和关键路径；根据演练耗时预测高风险任务。","Predictive",2,""],
-   ["最终用户准备","变革经理","培训一刀切，采纳风险不可见。","按用户群提供个性化学习路径和准备度评分。","Predictive",1,""],
-   ["上线支持（Hypercare）","支持负责人","上线后工单激增，同样的问题反复出现。","工单分类和分派；从知识库推荐解决方案；回答操作类问题。","Agentic",3,""]
+  { name:"Deploy 部署", desc:"切换上线，风险最集中。", share:15, l2:[
+   ["Cutover 计划与演练","Cutover Manager",["Cutover Plan","演练报告","回退方案"],"上千个任务在 Excel 中管理，依赖关系容易遗漏。","自动检查依赖和关键路径，根据演练耗时预测高风险任务。","Predictive",2,"15–25%",""],
+   ["生产数据迁移与对账","Data Migration Lead",["生产数据加载记录","数据对账签字报告"],"生产对账靠人工比对，时间窗口紧。","自动比对源系统和目标系统，只把异常项交给业务确认。","Matching",2,"对账 ↓约 40%",""],
+   ["上线准备评估","Engagement Manager",["Go / No-Go 检查表","Readiness Assessment"],"上线准备证据分散在测试、缺陷、数据和培训各处，汇总耗时。","自动汇总测试、缺陷、数据和培训状态，生成 Go / No-Go 材料。","Generative",2,"30–40%","SAP Cloud ALM"],
+   ["最终用户培训","Training Lead / Key Users",["培训记录","用户准备度评估"],"培训一刀切，谁没准备好不清楚。","按角色推送学习路径，用测验结果评估准备度。","Predictive",1,"10–20%",""],
+   ["上线支持 Hypercare","Support Lead",["Hypercare 日志","问题报告","稳定性报告"],"上线后工单激增，重复问题占大头，项目团队被拖住无法撤场。","工单分类分派、知识库推荐解决方案、自动回答操作类问题，加快撤场。","Agentic",3,"工单处理 ↓30–40%",""]
   ]},
-  { name:"Run 运维", desc:"运营并持续优化。", l2:[
-   ["事件管理（AMS）","AMS 顾问","重复的一线工单多，根因分析靠人工。","聊天机器人分流操作类问题；基于日志和历史工单给出根因建议。","Agentic",3,"SAP Cloud ALM"],
-   ["版本升级影响分析","Solution Architect","每次版本发布都要做回归测试和自开发代码影响分析。","对照客户的范围和代码解读 release notes，生成回归测试集。","Generative",2,""],
-   ["价值实现跟踪","Engagement Lead","上线后承诺的收益很少被跟踪。","用流程挖掘跟踪业务案例 KPI，并解释指标变化。","Predictive",2,"SAP Signavio Process Insights"]
+  { name:"Run 运维", desc:"移交 AMS，持续优化。", share:7, l2:[
+   ["移交 AMS 与知识转移","Engagement Manager / AMS Lead",["KT 计划","运维手册 Runbook","解决方案文档"],"知识转移靠讲解和零散文档，移交后 AMS 仍频繁回问项目团队。","从项目文档自动生成运维手册，把项目知识库交给 AMS 继续使用。","Generative",3,"KT ↓30–50%","SAP Cloud ALM"],
+   ["AMS 事件管理","AMS 顾问",["事件处理记录","SLA 报告"],"一线工单重复多，根因分析靠人工。","聊天机器人分流操作类问题，基于日志和历史工单给出根因建议。","Agentic",3,"20–40%","SAP Cloud ALM"],
+   ["版本升级影响分析","Solution Architect",["升级影响评估","回归测试集"],"每次版本发布都要人工读 release notes，评估对自开发和流程的影响。","对照客户范围和代码解读 release notes，自动生成影响清单和回归测试集。","Generative",2,"30–50%",""],
+   ["价值实现跟踪","Engagement Manager",["价值跟踪报告"],"上线后承诺的收益很少有人持续跟踪，难以支撑后续合作。","用流程挖掘跟踪 business case KPI，并自动解释指标变化。","Predictive",1,"—","SAP Signavio Process Insights"]
+  ]},
+  { name:"贯穿全程 PMO", desc:"项目管理和质量，每周都在发生的成本。", share:5, l2:[
+   ["状态报告与 SteerCo","PMO / Project Manager",["周报","SteerCo 材料","RAID Log"],"每周花大量时间从各工作流收集状态、拼周报和 SteerCo PPT。","从 Cloud ALM / JIRA 自动汇总进度和 RAID，起草周报和 SteerCo 材料。","Generative",3,"PMO 工作量 ↓约 30%","SAP Cloud ALM"],
+   ["范围与变更管理","Engagement Manager",["变更请求 CR 日志","CR 影响评估"],"变更影响评估慢，小变更常被默默吸收成免费工作。","对照设计和估算模型自动评估 CR 影响和工作量，确保变更被识别和计费。","Generative",2,"减少范围蔓延",""],
+   ["交付物质量评审","Engagement QA Reviewer",["QA 评审报告"],"交付物质量评审靠人工抽查，覆盖有限。","按 EY 模板和标准自动检查交付物的完整性和一致性，评审人聚焦实质问题。","Generative",2,"30–40%",""],
+   ["资源与成本跟踪","PMO / Engagement Manager",["资源计划","预算跟踪（ETC / EAC）"],"超支往往在月底对账时才发现，纠偏太晚。","基于工时和进度预测燃烧率和完工成本，提前预警超支风险。","Predictive",2,"降低超支风险",""]
   ]}
  ]}
 }
@@ -272,7 +312,7 @@ int: {
 
 /* ===== UI ===== */
 const TYPES = ["Generative","Predictive","Document AI","Matching","Anomaly","Agentic"];
-const IMP = ["","较低","中等","高"];
+const LVL = {ext:["","较低","中等","高"], int:["","较低","中等","高"]};
 const st = {lens:"ext", proc:"S2P", l1:-1, types:new Set(), imp:0, q:""};
 try{ const s = JSON.parse(localStorage.getItem("sapai")||"{}"); if(s.lens && DATA[s.lens]) { st.lens=s.lens; st.proc=Object.keys(DATA[s.lens])[0]; if(s.proc && DATA[s.lens][s.proc]) st.proc=s.proc; } }catch(e){}
 const save=()=>{try{localStorage.setItem("sapai",JSON.stringify({lens:st.lens,proc:st.proc}))}catch(e){}};
@@ -281,46 +321,75 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const personIcon='<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5 6-5s6 1.7 6 5" fill="currentColor"/></svg>';
 const prefix = (lens,proc)=> lens==="ext"?proc:"ACT";
 
-function match(r){
-  if(st.types.size && !st.types.has(r[4])) return false;
-  if(r[5] < st.imp) return false;
-  if(st.q){ const q=st.q.toLowerCase(); if(!r.slice(0,5).concat(r[6]).join(" ").toLowerCase().includes(q)) return false; }
+// External rows: [name, team, pain, ai, type, value, sap]
+// Internal rows: [name, role, deliverables[], pain, ai, type, saving, savingRange, tools]
+function row(r){
+  return st.lens==="ext"
+    ? {name:r[0], who:r[1], deliv:[], pain:r[2], ai:r[3], type:r[4], lvl:r[5], range:"", sap:r[6]}
+    : {name:r[0], who:r[1], deliv:r[2], pain:r[3], ai:r[4], type:r[5], lvl:r[6], range:r[7], sap:r[8]};
+}
+
+function match(o){
+  if(st.types.size && !st.types.has(o.type)) return false;
+  if(o.lvl < st.imp) return false;
+  if(st.q){ const q=st.q.toLowerCase(); if(![o.name,o.who,o.pain,o.ai,o.type,o.sap,o.range].concat(o.deliv).join(" ").toLowerCase().includes(q)) return false; }
   return true;
+}
+
+function summary(p){
+  if(st.lens!=="int"){ $("summary").hidden=true; return; }
+  const rows = p.l1.map((l,i)=>{
+    const all=l.l2.map(row), hi=all.filter(o=>o.lvl===3).length;
+    return `<button class="bar" data-l1="${i}" aria-pressed="${st.l1===i}">
+      <span class="bn">${esc(l.name)}</span>
+      <span class="track"><span class="fill" style="width:${l.share/45*100}%"></span></span>
+      <span class="bv">${l.share}%</span>
+      <span class="bh">${hi} 个高节省点</span></button>`}).join("");
+  $("summary").hidden=false;
+  $("summary").innerHTML = `<div class="sum-head"><h2>成本视角：工作量花在哪里</h2>
+    <p>各阶段占 SI 实施总工作量的示意比例（典型 S/4HANA 项目，按经验假设，待用 EY 项目实际数据校准）。Realize 和 Explore 合计约六成，是 AI 节省的主战场；Explore 阶段压缩 RICEFW 数量，会连带减少后面的开发、测试和运维成本。点击某一阶段可筛选。</p></div>
+    <div class="bars">${rows}</div>`;
 }
 
 function render(){
   const lensData = DATA[st.lens], p = lensData[st.proc];
-  document.documentElement.style.setProperty("--accent", `var(${p.color})`);
   for(const b of document.querySelectorAll(".lens button")) b.setAttribute("aria-pressed", b.dataset.lens===st.lens);
   $("procs").innerHTML = Object.entries(lensData).map(([k,v])=>{
     const n=v.l1.reduce((a,l)=>a+l.l2.length,0);
     return `<button data-proc="${k}" aria-pressed="${k===st.proc}">${esc(v.name)}<small>${n} 个 L2</small></button>`}).join("");
+  summary(p);
   const pre = prefix(st.lens, st.proc);
   $("ribbon").innerHTML = p.l1.map((l,i)=>{
-    const n=l.l2.filter(match).length;
+    const n=l.l2.map(row).filter(match).length;
     return `<button data-l1="${i}" aria-pressed="${st.l1===i}" title="${esc(l.desc)}"><span class="code">${pre}-${i+1}</span><span class="nm">${esc(l.name)}</span><span class="ct">显示 ${n} / ${l.l2.length}</span></button>`}).join("");
   $("types").innerHTML = TYPES.map(t=>`<button class="fchip" data-type="${t}" aria-pressed="${st.types.has(t)}">${t}</button>`).join("");
+  $("imp-lbl").textContent = st.lens==="ext" ? "价值" : "节省潜力";
+  $("imp-hi").textContent = st.lens==="ext" ? "仅高价值" : "仅高节省";
   for(const b of document.querySelectorAll("[data-imp]")) b.setAttribute("aria-pressed", +b.dataset.imp===st.imp);
+  const lvlWord = st.lens==="ext" ? "价值" : "节省潜力";
   let total=0, shown=0, html="";
   p.l1.forEach((l,i)=>{
     total+=l.l2.length;
     if(st.l1>=0 && st.l1!==i) return;
-    const rows=l.l2.map((r,j)=>[r,j]).filter(([r])=>match(r));
+    const rows=l.l2.map((r,j)=>[row(r),j]).filter(([o])=>match(o));
     shown+=rows.length;
     if(!rows.length) return;
-    html+=`<section class="l1" id="l1-${i}"><div class="l1head"><span class="code">${pre}-${i+1}</span><h2>${esc(l.name)}</h2><p>${esc(l.desc)}</p></div>`;
-    html+=rows.map(([r,j])=>`<article class="l2">
-      <div class="who"><span class="code">${pre}-${i+1}.${j+1} · L2</span><h3>${esc(r[0])}</h3>
-        <span class="team">${personIcon}${esc(r[1])}</span>
-        <div class="meta"><span class="tag">${esc(r[4])}</span></div>
-        <div class="impact" aria-label="价值 ${r[5]} / 3">${[1,2,3].map(k=>`<i class="${k<=r[5]?"on":""}"></i>`).join("")}<span>${IMP[r[5]]}价值</span></div>
+    html+=`<section class="l1" id="l1-${i}"><div class="l1head"><span class="code">${pre}-${i+1}</span><h2>${esc(l.name)}</h2>${l.share?`<span class="share">约占工作量 ${l.share}%</span>`:""}<p>${esc(l.desc)}</p></div>`;
+    html+=rows.map(([o,j])=>`<article class="l2">
+      <div class="who"><span class="code">${pre}-${i+1}.${j+1} · L2</span><h3>${esc(o.name)}</h3>
+        <span class="team">${personIcon}${esc(o.who)}</span>
+        ${o.deliv.length?`<div class="deliv"><span class="col-h">交付物</span><ul>${o.deliv.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></div>`:""}
+        <div class="meta"><span class="tag">${esc(o.type)}</span></div>
+        <div class="impact" aria-label="${lvlWord} ${o.lvl} / 3">${[1,2,3].map(k=>`<i class="${k<=o.lvl?"on":""}"></i>`).join("")}<span>${LVL[st.lens][o.lvl]}${lvlWord}</span></div>
       </div>
-      <div class="pain"><span class="col-h">痛点</span><p>${esc(r[2])}</p></div>
-      <div class="ai"><span class="col-h">AI 如何帮助</span><p>${esc(r[3])}</p>${r[6]?`<div class="sapref">SAP 现有能力：<b>${esc(r[6])}</b></div>`:""}</div>
+      <div class="pain"><span class="col-h">痛点</span><p>${esc(o.pain)}</p></div>
+      <div class="ai"><span class="col-h">AI 如何帮助</span><p>${esc(o.ai)}</p>
+        ${o.range?`<div class="saving"><span>节省潜力（示意）</span><b>${esc(o.range)}</b></div>`:""}
+        ${o.sap?`<div class="sapref">${st.lens==="ext"?"SAP 现有能力":"可用工具"}：<b>${esc(o.sap)}</b></div>`:""}</div>
     </article>`).join("");
     html+=`</section>`;
   });
-  $("out").innerHTML = html || `<div class="empty">没有符合筛选条件的机会点。请清除部分筛选或搜索词。</div>`;
+  $("out").innerHTML = html || `<div class="empty">没有符合筛选条件的条目。请清除部分筛选或搜索词。</div>`;
   $("count").textContent = `显示 ${shown} / ${total} 个 L2 ${st.lens==="ext"?"流程":"活动"}`;
 }
 
